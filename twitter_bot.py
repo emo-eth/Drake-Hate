@@ -5,7 +5,8 @@ import os, tweepy, inspect, hashlib
 
 TWITTER_SEARCH_LIMIT = 350
 
-# Use ConfigParser to get read of hardcoded credentials?
+# TODO: Get actual credentials, and DON'T check them in!
+# TODO: Use ConfigParser?
 CONSUMER_KEY = 'FuFdD9Eoy1EyeXqRdYZWuPR04'
 CONSUMER_SECRET = 'XUidcH5PwxRCuy4ljjWUy8orfCuZ5XBpzExiMDe2snISO71fWr'
 ACCESS_KEY = '755491015-y1ntCjpOal2u4xwOKJ5xTeXNzutPv5WI9JZxIlk9'
