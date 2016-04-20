@@ -5,6 +5,10 @@ from nltk.sentiment import SentimentAnalyzer
 from nltk.sentiment.util import *
 from nltk.tokenize import word_tokenize
 
+
+
+# adapted from http://www.nltk.org/howto/sentiment.html
+
 # dict of sentiment scores for lookup
 sentiment_dict = {'4': 'positive', '2': 'neutral', '0': 'negative'}
 
@@ -61,7 +65,7 @@ sentim_analyzer = SentimentAnalyzer()
 all_words_neg = sentim_analyzer.all_words(
     [mark_negation(tweet) for tweet in train_tweets])
 unigram_feats = sentim_analyzer.unigram_word_feats(all_words_neg, min_freq=4)
-print(len(unigram_feats))
+print(unigram_feats)
 sentim_analyzer.add_feat_extractor(
     extract_unigram_feats, unigrams=unigram_feats)
 
