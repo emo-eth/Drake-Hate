@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
+# Partially adapted from flebel on GitHub at http://bit.ly/1ThAsJL.
+
+# API Keys
+import settings as settings
 import os, tweepy, inspect, hashlib
 
 TWITTER_SEARCH_LIMIT = 350
 
-# TODO: Get actual credentials, and DON'T check them in!
-# TODO: Use ConfigParser?
-CONSUMER_KEY = 'FuFdD9Eoy1EyeXqRdYZWuPR04'
-CONSUMER_SECRET = 'XUidcH5PwxRCuy4ljjWUy8orfCuZ5XBpzExiMDe2snISO71fWr'
-ACCESS_KEY = '755491015-y1ntCjpOal2u4xwOKJ5xTeXNzutPv5WI9JZxIlk9'
-ACCESS_SECRET = 'GJiEIx95eEbv5uCPepOZ0xSevzc1pjVJ3zpYqenil1gVl'
-
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
+auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
+auth.set_access_token(settings.ACCESS_KEY, settings.ACCESS_SECRET)
 api = tweepy.API(auth)
 
 # Very incomplete list of music/ media blogs. Exclude tweets from 
@@ -46,7 +43,7 @@ for tweet in results:
 
 try:
     last_tweet_id = tweets[0].id
-except IndexError: # No results found
+except IndexError:  # No results found
     last_tweet_id = savepoint
 
 # Filter tweets using blacklist
@@ -55,6 +52,7 @@ tweets = [tweet for tweet in tweets if tweet.author.screen_name not in user_blac
 tweets.reverse()
 
 for i in range(len(tweets)):
+    # If "negative" (come back to this definition):
     print('(%s) %s: %s\n' % \
             (tweets[i].created_at,
              tweets[i].author.screen_name.encode('utf-8'),
