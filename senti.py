@@ -5,6 +5,9 @@ from nltk.sentiment import SentimentAnalyzer
 from nltk.sentiment.util import *
 from nltk.tokenize import word_tokenize
 
+# TODO: analyze sentiment intensity with VADER
+# TODO: as above, pick most negative to retweet (model is imperfect)
+# TODO: learn/use maximum entropy classifier
 
 
 # adapted from http://www.nltk.org/howto/sentiment.html
@@ -77,3 +80,4 @@ trainer = NaiveBayesClassifier.train
 classifier = sentim_analyzer.train(trainer, training_set)
 for key, value in sorted(sentim_analyzer.evaluate(test_set).items()):
     print('{0}: {1}'.format(key, value))
+    # TODO: analyze intensity with VADER
