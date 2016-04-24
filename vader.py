@@ -2,7 +2,7 @@ import csv
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-# testing VADER fun
+'''testing VADER fun - so easy!'''
 
 # adapted from http://www.nltk.org/howto/sentiment.html
 sid = SentimentIntensityAnalyzer()
