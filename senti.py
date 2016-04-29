@@ -1,9 +1,12 @@
 import csv
 from nltk.classify import NaiveBayesClassifier
-from nltk.corpus import subjectivity
+from nltk.classify import MaxentClassifier
 from nltk.sentiment import SentimentAnalyzer
 from nltk.sentiment.util import *
 from nltk.tokenize import word_tokenize
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import pickle
+import os.path
 
 # TODO: analyze sentiment intensity with VADER
 # TODO: as above, pick most negative to retweet (model is imperfect)
@@ -23,6 +26,9 @@ for key in sentiment_dict:
 SENTIMENT_COL = 0
 TWEET_COL = -1
 
+if os.path.exists('sentim_analyzer.pk1'):
+    with open('sentim_analyzer.pk1', 'rb') as f:
+        sentim_analyzer = pickle.load(f)
 
 # TODO: strip of @mentions
 rows = []
@@ -76,8 +82,19 @@ sentim_analyzer.add_feat_extractor(
 training_set = sentim_analyzer.apply_features(train_tweets)
 test_set = sentim_analyzer.apply_features(test_tweets)
 
-trainer = NaiveBayesClassifier.train
+#trainer = NaiveBayesClassifier.train
+#maximum entropy classifier does 100 iterations ;_;
+trainer = MaxentClassifier.train
 classifier = sentim_analyzer.train(trainer, training_set)
 for key, value in sorted(sentim_analyzer.evaluate(test_set).items()):
     print('{0}: {1}'.format(key, value))
     # TODO: analyze intensity with VADER
+
+with open('sentim_analyzer.pk1', 'wb') as f:
+    pickle.dump(sentim_analyzer, f)
+
+with open('trainer.pk1', 'wb') as f:
+    pickle.dump(trainer, f)
+
+with open('classifier.pk1', 'wb') as f:
+    pickle.dump(classfier, f)
