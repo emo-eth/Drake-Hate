@@ -12,7 +12,6 @@ import os.path
 # TODO: as above, pick most negative to retweet (model is imperfect)
 # TODO: learn/use maximum entropy classifier
 
-
 # adapted from http://www.nltk.org/howto/sentiment.html
 
 # dict of sentiment scores for lookup
@@ -30,7 +29,8 @@ if os.path.exists('sentim_analyzer.pk1'):
     with open('sentim_analyzer.pk1', 'rb') as f:
         sentim_analyzer = pickle.load(f)
 
-# TODO: strip of @mentions
+# TODO: handle mentions/ links
+
 rows = []
 with open('st140u.csv', 'rt', encoding='utf-8') as f:
     reader = csv.reader(f)
@@ -54,29 +54,29 @@ negative_tweets = [(word_tokenize(tup[0]), tup[1])
 
 print(len(positive_tweets), len(negative_tweets))
 
-# in practice, these *should* be the same
-eighty_per_cent_pos = int(.8 * len(positive_tweets))
-eighty_per_cent_neg = int(.8 * len(negative_tweets))
+eighty_percent_pos = int(.8 * len(positive_tweets))
+eighty_percent_neg = int(.8 * len(negative_tweets))
 
 # split into training and test sets
-train_pos = positive_tweets[:eighty_per_cent_pos]
-test_pos = positive_tweets[eighty_per_cent_pos:]
-train_neg = negative_tweets[:eighty_per_cent_neg]
-test_neg = negative_tweets[eighty_per_cent_neg:]
+train_pos = positive_tweets[:eighty_percent_pos]
+test_pos = positive_tweets[eighty_percent_pos:]
+train_neg = negative_tweets[:eighty_percent_neg]
+test_neg = negative_tweets[eighty_percent_neg:]
 
 # combine the sets
 train_tweets = train_pos + train_neg
 test_tweets = test_pos + test_neg
 
-# initiate Sentiment Analyzer
-# use simple unigram word features, handling negation
+# initiate analyzer handling unigram word features, negation
 sentim_analyzer = SentimentAnalyzer()
-all_words_neg = sentim_analyzer.all_words(
-    [mark_negation(tweet) for tweet in train_tweets])
+
+# append '_NEG' to words following a negation word
+all_words_neg = sentim_analyzer.all_words([mark_negation(tweet) for tweet in train_tweets])
 unigram_feats = sentim_analyzer.unigram_word_feats(all_words_neg, min_freq=4)
+
 print(unigram_feats)
-sentim_analyzer.add_feat_extractor(
-    extract_unigram_feats, unigrams=unigram_feats)
+
+sentim_analyzer.add_feat_extractor(extract_unigram_feats, unigrams=unigram_feats)
 
 # apply features to obtain a feature-value representation of our datasets
 training_set = sentim_analyzer.apply_features(train_tweets)
