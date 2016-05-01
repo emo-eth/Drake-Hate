@@ -4,7 +4,7 @@
 # Partially adapted from flebel on GitHub at http://bit.ly/1ThAsJL.
 
 # Local Files
-import settings as settings
+from local_settings import *
 from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
 
@@ -28,8 +28,8 @@ OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 
 TWITTER_SEARCH_LIMIT = 350
 
-auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
-auth.set_access_token(settings.ACCESS_KEY, settings.ACCESS_SECRET)
+auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth)
 
 # Store the ID of the last tweet we retweeted in a file
