@@ -62,11 +62,15 @@ tweets = [tweet for tweet in tweets
           if tweet.author.screen_name not in user_blacklist]
 tweets.reverse()
 
+retweets = 0
+
 for tweet in tweets:
     twext = tweet.text
     for phrase in OBVIOUS_PHRASES:
         if phrase in twext.lower():
             api.retweet(tweet.id)
+            retweets += 1
+            print('Retweeting "%s"...' % twext)
 
     # Testing/ debug stuff
     # print(sentim_analyzer.classify(word_tokenize(tweet)))
@@ -74,6 +78,8 @@ for tweet in tweets:
     #       (tweets[i].created_at,
     #        tweets[i].author.screen_name.encode('utf-8'),
     #        twext))
+
+print('\n Retweeted %d haters' % retweets)
 
 # Write last retweeted tweet id to file
 with open(last_id_file, 'w') as file:
