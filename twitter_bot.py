@@ -69,8 +69,9 @@ tweets.reverse()
 
 for tweet in tweets:
     twext = tweet.text
-    if 'drake is trash' in twext.lower():
-        api.retweet(tweet.id)
+    for phrase in OBVIOUS_PHRASES:
+        if phrase in twext.lower():
+            api.retweet(tweet.id)
 
 
 # Write last retweeted tweet id to file
