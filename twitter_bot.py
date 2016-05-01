@@ -3,8 +3,12 @@
 
 # Partially adapted from flebel on GitHub at http://bit.ly/1ThAsJL.
 
-# API Keys
+# Local Files
 import settings as settings
+from user_blacklist import user_blacklist
+from word_blacklist import word_blacklist
+
+# Libraries
 import os
 import tweepy
 import inspect
@@ -26,18 +30,6 @@ TWITTER_SEARCH_LIMIT = 350
 auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
 auth.set_access_token(settings.ACCESS_KEY, settings.ACCESS_SECRET)
 api = tweepy.API(auth)
-
-# Load blacklists from file
-# TODO: This is clunky af! Can I make it more Pythonic? Maybe move to
-# helper fn?
-with open('word_blacklist.txt', 'r', encoding='utf-8') as f:
-    word_blacklist = [word.strip().lower() for word in f.readlines()
-                      if word and not word.startswith('# ')]
-
-
-with open("user_blacklist.txt", 'r', encoding='utf-8') as f:
-    user_blacklist = [user.strip() for user in f.readlines()
-                      if user != '' and user[0] != '#']
 
 # Store the ID of the last tweet we retweeted in a file
 # so we don't retweet things twice!
