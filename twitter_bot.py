@@ -79,7 +79,10 @@ for tweet in tweets:
     #        tweets[i].author.screen_name.encode('utf-8'),
     #        twext))
 
-print('\n Retweeted %d haters' % retweets)
+if retweets > 0:
+  print('Retweeted %d haters' % retweets if retweets != 1 else 'Retweeted 1 hater')
+else:
+  print('Nothing to retweet!')
 
 # Write last retweeted tweet id to file
 with open(last_id_file, 'w') as file:
