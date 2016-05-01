@@ -11,10 +11,8 @@ from word_blacklist import word_blacklist
 # Libraries
 import os
 import tweepy
-import inspect
-import hashlib
 import pickle
-from nltk.tokenize import word_tokenize
+# from nltk.tokenize import word_tokenize
 
 with open('sentim_analyzer.pk1', 'rb') as f:
     sentim_analyzer = pickle.load(f)
@@ -24,6 +22,9 @@ with open('classifier.pk1', 'rb') as f:
 
 with open('trainer.pk1', 'rb') as f:
     trainer = pickle.load(f)
+
+
+OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 
 TWITTER_SEARCH_LIMIT = 350
 
@@ -66,15 +67,12 @@ tweets = [tweet for tweet in tweets
           if tweet.author.screen_name not in user_blacklist]
 tweets.reverse()
 
+for tweet in tweets:
+    twext = tweet.text
+    if 'drake is trash' in twext.lower():
+        api.retweet(tweet.id)
 
-for i in range(len(tweets)):
-    tweet = tweets[i].text
-    print(sentim_analyzer.classify(word_tokenize(tweet)))
-    print('(%s) %s: %s\n' %
-          (tweets[i].created_at,
-           tweets[i].author.screen_name.encode('utf-8'),
-           tweet))
 
 # Write last retweeted tweet id to file
-# with open(last_id_file, 'w') as file:
-#     file.write(str(last_tweet_id))
+with open(last_id_file, 'w') as file:
+    file.write(str(last_tweet_id))
