@@ -11,4 +11,8 @@ word_blacklist = [
   '#nowplaying',
   '#np',
   '#onrepeat',
-  '#streaming']
+  '#streaming',
+
+  # A lot of people tweet about Drake and Josh apaprently
+  'bell',
+  'josh']
