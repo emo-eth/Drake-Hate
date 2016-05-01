@@ -1,14 +1,14 @@
 word_blacklist = [
 
   # Retweet symbols
-  'RT',
+  'rt',
   'u♺',
 
   # Variants of 'listening now'
   'u🎧',
-  '#ListeningNow',
-  '#NowListening',
-  '#NowPlaying',
-  '#NP',
-  '#OnRepeat',
-  '#Streaming']
+  '#listeningnow',
+  '#nowlistening',
+  '#nowplaying',
+  '#np',
+  '#onrepeat',
+  '#streaming']
