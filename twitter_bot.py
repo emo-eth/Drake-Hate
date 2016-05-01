@@ -55,12 +55,7 @@ try:
 except IndexError:  # No results found
     last_tweet_id = savepoint
 
-# TODO: Handle emojis better! Right now tweet.text.split() is
-# tokenizing tweets only at whitespace. It'd be nice to recognize
-# a string of emojis and process them all individually, rather
-# than as a collective 'word'.
-
-# Filter tweets using blacklist
+# Filter tweets using blacklists
 tweets = [tweet for tweet in tweets if not any(
     word.lower() in word_blacklist for word in tweet.text.split())]
 tweets = [tweet for tweet in tweets
@@ -73,6 +68,12 @@ for tweet in tweets:
         if phrase in twext.lower():
             api.retweet(tweet.id)
 
+    # Testing/ debug stuff
+    # print(sentim_analyzer.classify(word_tokenize(tweet)))
+    # print('(%s) %s: %s\n' %
+    #       (tweets[i].created_at,
+    #        tweets[i].author.screen_name.encode('utf-8'),
+    #        twext))
 
 # Write last retweeted tweet id to file
 with open(last_id_file, 'w') as file:
