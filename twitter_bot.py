@@ -4,7 +4,7 @@
 # Partially adapted from flebel on GitHub at http://bit.ly/1ThAsJL.
 
 # Local Files
-from local_settings import *
+# from local_settings import *
 from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
 
