@@ -13,6 +13,6 @@ word_blacklist = [
   '#onrepeat',
   '#streaming',
 
-  # A lot of people tweet about Drake and Josh apaprently
+  # A lot of people tweet about Drake and Josh apparently
   'bell',
   'josh']
