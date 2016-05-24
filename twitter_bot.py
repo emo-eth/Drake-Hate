@@ -26,6 +26,20 @@ OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 
 TWITTER_SEARCH_LIMIT = 350
 
+def remove_quoted_text(twext):
+    result = ""
+    in_quotes = False
+    for c in twext:
+        if c is '"':
+            in_quotes = not in_quotes
+            continue
+        if not in_quotes:
+            result = result + c
+    # Quotations were mismatched! Return original string.
+    if in_quotes is True:
+        return twext
+    return result
+
 auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
 auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
 api = tweepy.API(auth)
@@ -63,7 +77,7 @@ tweets.reverse()
 retweets = 0
 
 for tweet in tweets:
-    twext = tweet.text
+    twext = remove_quoted_text(tweet.text)
     for phrase in OBVIOUS_PHRASES:
         if phrase in twext.lower():
             api.retweet(tweet.id)
@@ -78,9 +92,9 @@ for tweet in tweets:
     #        twext))
 
 if retweets > 0:
-  print('Retweeted %d haters' % retweets if retweets != 1 else 'Retweeted 1 hater')
+    print('Retweeted %d haters' % retweets if retweets != 1 else 'Retweeted 1 hater')
 else:
-  print('Nothing to retweet!')
+    print('Nothing to retweet!')
 
 # Write last retweeted tweet id to file
 with open(last_id_file, 'w') as file:
