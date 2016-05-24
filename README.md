@@ -1,6 +1,6 @@
 # Drake Hate
 
-A Twitter bot that retweets Drake hate using sentiment analysis.
+A Twitter bot that retweets Drake hate using sentiment analysis. Send us hate @sixgodwatching!
 
 ### Resources
 The following are some of the resources we've referred to while putting this together.
