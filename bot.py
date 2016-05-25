@@ -6,6 +6,7 @@
 # Local Files
 from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
+import utils
 
 # Libraries
 import os
@@ -25,20 +26,6 @@ with open('trainer.pk1', 'rb') as f:
 OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 
 TWITTER_SEARCH_LIMIT = 350
-
-def remove_quoted_text(twext):
-    result = ""
-    in_quotes = False
-    for c in twext:
-        if c is '"':
-            in_quotes = not in_quotes
-            continue
-        if not in_quotes:
-            result = result + c
-    # Quotations were mismatched! Return original string.
-    if in_quotes is True:
-        return twext
-    return result
 
 auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
 auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
@@ -77,7 +64,7 @@ tweets.reverse()
 retweets = 0
 
 for tweet in tweets:
-    twext = remove_quoted_text(tweet.text)
+    twext = utils.remove_quoted_text(tweet.text)
     for phrase in OBVIOUS_PHRASES:
         if phrase in twext.lower():
             api.retweet(tweet.id)
