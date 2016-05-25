@@ -1,4 +1,5 @@
 # Drake Hate
+[![Build Status](https://travis-ci.org/sashaperigo/Drake-Hate.svg?branch=master)](https://travis-ci.org/sashaperigo/Drake-Hate)
 
 A Twitter bot that retweets Drake hate using sentiment analysis. Send us hate [@sixgodwatching](https://twitter.com/sixgodwatching)!
 
