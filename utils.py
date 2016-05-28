@@ -11,4 +11,3 @@ def remove_quoted_text(twext):
     if in_quotes is True:
         return twext
     return result
-    
