@@ -8,27 +8,15 @@ from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
 from utils import *
 
-# Libraries
-import pickle
-# from nltk.tokenize import word_tokenize
-
-with open('sentim_analyzer.pk1', 'rb') as f:
-    sentim_analyzer = pickle.load(f)
-
-with open('classifier.pk1', 'rb') as f:
-    classifier = pickle.load(f)
-
-with open('trainer.pk1', 'rb') as f:
-    trainer = pickle.load(f)
-
 OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 
 TWITTER_SEARCH_LIMIT = 350
 
-if dev_environ():
-  api = dev_oauth()
+dev = dev_environ()
+if dev:
+    api = dev_oauth()
 else:
-  api = prod_oauth()
+    api = prod_oauth()
 
 # Store the ID of the last tweet we retweeted in a file
 # so we don't retweet things twice!
@@ -71,11 +59,11 @@ for tweet in tweets:
             print('Retweeting "%s"...' % twext)
 
     # Testing/ debug stuff
-    # print(sentim_analyzer.classify(word_tokenize(tweet)))
-    # print('(%s) %s: %s\n' %
-    #       (tweets[i].created_at,
-    #        tweets[i].author.screen_name.encode('utf-8'),
-    #        twext))
+    if dev:
+        print('(%s) %s: %s\n' %
+              (tweets[i].created_at,
+               tweets[i].author.screen_name.encode('utf-8'),
+               twext))
 
 if retweets > 0:
     print('Retweeted %d haters' % retweets if retweets != 1 else 'Retweeted 1 hater')
