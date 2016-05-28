@@ -61,10 +61,9 @@ for tweet in tweets:
     # Testing/ debug stuff
     if dev:
         print('(%s) %s: %s\n' %
-              (tweets[i].created_at,
-               tweets[i].author.screen_name.encode('utf-8'),
+              (tweet.created_at,
+               tweet.author.screen_name,
                twext))
-        print('\n\n')
 
 if retweets > 0:
     print('Retweeted %d haters' % retweets if retweets != 1 else 'Retweeted 1 hater')
