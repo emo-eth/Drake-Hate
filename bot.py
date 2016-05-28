@@ -6,11 +6,9 @@
 # Local Files
 from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
-import utils
+from utils import *
 
 # Libraries
-import os
-import tweepy
 import pickle
 # from nltk.tokenize import word_tokenize
 
@@ -27,9 +25,10 @@ OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 
 TWITTER_SEARCH_LIMIT = 350
 
-auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
-api = tweepy.API(auth)
+if dev_environ():
+  api = dev_oauth()
+else:
+  api = prod_oauth()
 
 # Store the ID of the last tweet we retweeted in a file
 # so we don't retweet things twice!
@@ -64,7 +63,7 @@ tweets.reverse()
 retweets = 0
 
 for tweet in tweets:
-    twext = utils.remove_quoted_text(tweet.text)
+    twext = remove_quoted_text(tweet.text)
     for phrase in OBVIOUS_PHRASES:
         if phrase in twext.lower():
             api.retweet(tweet.id)
