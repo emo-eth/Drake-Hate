@@ -6,11 +6,9 @@
 # Local Files
 from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
-import utils
+from utils import *
 
 # Libraries
-import os
-import tweepy
 import pickle
 # from nltk.tokenize import word_tokenize
 
@@ -26,6 +24,9 @@ with open('trainer.pk1', 'rb') as f:
 OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 
 TWITTER_SEARCH_LIMIT = 350
+
+if dev_environ():
+  print("Dev environ!")
 
 auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
 auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
