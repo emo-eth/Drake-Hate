@@ -63,3 +63,4 @@ target/
 
 # Settings File (contains API keys)
 local_settings.py
+gspread-creds.json

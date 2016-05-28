@@ -7,6 +7,7 @@
 from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
 import utils
+import gsheet_utils
 
 # Libraries
 import os
@@ -27,8 +28,8 @@ OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 
 TWITTER_SEARCH_LIMIT = 350
 
-auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
+auth = tweepy.OAuthHandler(os.environ['TWITTER_CONSUMER_KEY'], os.environ['TWITTER_CONSUMER_SECRET'])
+auth.set_access_token(os.environ['TWITTER_ACCESS_KEY'], os.environ['TWITTER_ACCESS_SECRET'])
 api = tweepy.API(auth)
 
 # Store the ID of the last tweet we retweeted in a file
