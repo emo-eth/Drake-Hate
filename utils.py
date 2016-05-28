@@ -2,6 +2,9 @@
 # temporarily living here until we set up a main method in the 
 # bot.py file.
 
+# Local files
+import settings as settings
+
 # Libraries
 import sys
 import os
@@ -14,10 +17,13 @@ def dev_environ():
     if len(sys.argv) > 1:
         if sys.argv[1] == '--dev':
             return True
-            
+
     return False
 
-# def dev_oauth():
+def dev_oauth():
+    auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
+    auth.set_access_token(settings.ACCESS_KEY, settings.ACCESS_SECRET)
+    return tweepy.API(auth)
 
 def prod_oauth():
     auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])

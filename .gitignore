@@ -62,4 +62,7 @@ target/
 .ipynb_checkpoints
 
 # Settings File (contains API keys)
-local_settings.py
+settings.py
+
+# Local last id file
+last_id
