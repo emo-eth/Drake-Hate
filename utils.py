@@ -3,7 +3,7 @@
 # bot.py file.
 
 # Local files
-import settings as settings
+import json
 
 # Libraries
 import sys
@@ -21,8 +21,11 @@ def dev_environ():
     return False
 
 def dev_oauth():
-    auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
-    auth.set_access_token(settings.ACCESS_KEY, settings.ACCESS_SECRET)
+    with open('settings.json', 'r') as f:
+        settings = json.load(f)
+        
+    auth = tweepy.OAuthHandler(settings['CONSUMER_KEY'], settings['CONSUMER_SECRET'])
+    auth.set_access_token(settings['ACCESS_KEY'], settings['ACCESS_SECRET'])
     return tweepy.API(auth)
 
 def prod_oauth():
