@@ -20,17 +20,26 @@ def dev_environ():
 
     return False
 
-def dev_oauth():
-    with open('settings.json', 'r') as f:
-        settings = json.load(f)
-        
-    auth = tweepy.OAuthHandler(settings['CONSUMER_KEY'], settings['CONSUMER_SECRET'])
-    auth.set_access_token(settings['ACCESS_KEY'], settings['ACCESS_SECRET'])
-    return tweepy.API(auth)
+def twitter_oauth(dev):
+    ''' Handles Twitter OAuth and returns a Tweepy API object.
+    '''
+    if dev:
+        with open('settings.json', 'r') as f:
+            settings = json.load(f)
 
-def prod_oauth():
-    auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-    auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
+        consumer_key = settings['CONSUMER_KEY']
+        consumer_secret = settings['CONSUMER_SECRET']
+        access_key = settings['ACCESS_KEY']
+        access_secret = settings['ACCESS_SECRET']
+    
+    else:
+        consumer_key = os.environ['CONSUMER_KEY']
+        consumer_secret = os.environ['CONSUMER_SECRET']
+        access_key = os.environ['ACCESS_KEY']
+        access_secret = os.environ['ACCESS_SECRET']
+
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_key, access_secret)
     return tweepy.API(auth)
 
 def remove_quoted_text(twext):
@@ -51,3 +60,7 @@ def remove_quoted_text(twext):
     
     return result
 
+def print_tweet_info(tweet):
+    ''' Prints some basic info about the given tweet.
+    '''
+    print('(%s) %s: %s\n' % (tweet.created_at, tweet.author.screen_name, tweet.text))
