@@ -1,6 +1,11 @@
+import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from oauth2client import crypt
+
+SPREADSHEET_KEY = '1hUA03o4uOQvcywtIzlfUsP_DbDzwdShNlpsGecWSOME'
+NUM_ROWS_TO_ADD = 1000
+MAX_NUM_TWEETS = 5000
 
 def get_gspread_credentials(dev):
     ''' Returns a Google Spreadsheets credentials object.
@@ -25,3 +30,20 @@ def get_gspread_credentials(dev):
     credentials._private_key_pkcs8_pem = private_key_pkcs8_pem
 
     return credentials
+
+def gspread_oauth(dev):
+    ''' Returns a Gspread Client instance.
+    '''
+    credentials = get_gspread_credentials(dev)
+    return gspread.authorize(credentials)
+
+def add_to_spreadsheet(wks, num_tweets, tweet):
+    ''' Adds the text from the Tweet object to the Google Sheet.
+        Returns the total number of tweets now logged on the spreadsheet.
+    '''
+    if num_tweets + 1 > wks.row_count:
+        wks.add_rows(NUM_ROWS_TO_ADD)
+
+    # WATCH OUT: ROWS AND COLUMNS ARE NOT ZERO INDEXED!
+    wks.update_cell(num_tweets + 1, 1, tweet.text)
+    return num_tweets + 1
