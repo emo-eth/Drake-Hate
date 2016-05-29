@@ -61,6 +61,11 @@ target/
 # iPython Notebook
 .ipynb_checkpoints
 
-# Settings File (contains API keys)
-local_settings.py
-gspread-creds.json
+# Settings Files (contains API keys)
+settings.py
+settings.json
+gspread_settings.json
+
+# Local last id file
+last_id
+>>>>>>> master
