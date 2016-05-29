@@ -7,13 +7,17 @@
 from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
 from utils import *
+from gspread_utils import *
 
 OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
-
 TWITTER_SEARCH_LIMIT = 350
 
 dev = dev_environ()
 api = twitter_oauth(dev)
+gapi = gspread_oauth(dev)
+
+wks = gapi.open_by_key(SPREADSHEET_KEY).sheet1
+num_tweets_logged = len(wks.get_all_values())
 
 # Store the ID of the last tweet we retweeted in a file
 # so we don't retweet things twice!
@@ -48,6 +52,9 @@ tweets.reverse()
 retweets = 0
 
 for tweet in tweets:
+    if num_tweets_logged < MAX_NUM_TWEETS:
+        num_tweets_logged = add_to_spreadsheet(wks, num_tweets_logged, tweet)
+
     twext = remove_quoted_text(tweet.text)
     for phrase in OBVIOUS_PHRASES:
         if phrase in twext.lower():
@@ -58,7 +65,6 @@ for tweet in tweets:
     # Testing/ debug stuff
     if dev:
         print_tweet_info(tweet)
-
 
 if retweets > 0:
     print('Retweeted %d haters' % retweets if retweets != 1 else 'Retweeted 1 hater')

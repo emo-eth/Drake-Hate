@@ -2,10 +2,8 @@
 # temporarily living here until we set up a main method in the 
 # bot.py file.
 
-# Local files
-import json
-
 # Libraries
+import json
 import sys
 import os
 import tweepy

@@ -1,3 +1,5 @@
 tweepy
 nltk
 twython
+gspread
+oauth2client
