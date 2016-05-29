@@ -13,10 +13,7 @@ OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 TWITTER_SEARCH_LIMIT = 350
 
 dev = dev_environ()
-if dev:
-    api = dev_oauth()
-else:
-    api = prod_oauth()
+api = twitter_oauth(dev)
 
 # Store the ID of the last tweet we retweeted in a file
 # so we don't retweet things twice!
@@ -60,10 +57,8 @@ for tweet in tweets:
 
     # Testing/ debug stuff
     if dev:
-        print('(%s) %s: %s\n' %
-              (tweet.created_at,
-               tweet.author.screen_name,
-               twext))
+        print_tweet_info(tweet)
+
 
 if retweets > 0:
     print('Retweeted %d haters' % retweets if retweets != 1 else 'Retweeted 1 hater')
