@@ -6,30 +6,18 @@
 # Local Files
 from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
-import utils
-
-# Libraries
-import os
-import tweepy
-import pickle
-# from nltk.tokenize import word_tokenize
-
-with open('sentim_analyzer.pk1', 'rb') as f:
-    sentim_analyzer = pickle.load(f)
-
-with open('classifier.pk1', 'rb') as f:
-    classifier = pickle.load(f)
-
-with open('trainer.pk1', 'rb') as f:
-    trainer = pickle.load(f)
+from utils import *
+from gspread_utils import *
 
 OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
-
 TWITTER_SEARCH_LIMIT = 350
 
-auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
-api = tweepy.API(auth)
+dev = dev_environ()
+api = twitter_oauth(dev)
+gapi = gspread_oauth(dev)
+
+wks = gapi.open_by_key(SPREADSHEET_KEY).sheet1
+num_tweets_logged = len(wks.get_all_values())
 
 # Store the ID of the last tweet we retweeted in a file
 # so we don't retweet things twice!
@@ -64,7 +52,10 @@ tweets.reverse()
 retweets = 0
 
 for tweet in tweets:
-    twext = utils.remove_quoted_text(tweet.text)
+    if num_tweets_logged < MAX_NUM_TWEETS:
+        num_tweets_logged = add_to_spreadsheet(wks, num_tweets_logged, tweet)
+
+    twext = remove_quoted_text(tweet.text)
     for phrase in OBVIOUS_PHRASES:
         if phrase in twext.lower():
             api.retweet(tweet.id)
@@ -72,11 +63,8 @@ for tweet in tweets:
             print('Retweeting "%s"...' % twext)
 
     # Testing/ debug stuff
-    # print(sentim_analyzer.classify(word_tokenize(tweet)))
-    # print('(%s) %s: %s\n' %
-    #       (tweets[i].created_at,
-    #        tweets[i].author.screen_name.encode('utf-8'),
-    #        twext))
+    if dev:
+        print_tweet_info(tweet)
 
 if retweets > 0:
     print('Retweeted %d haters' % retweets if retweets != 1 else 'Retweeted 1 hater')

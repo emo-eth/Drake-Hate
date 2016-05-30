@@ -1,13 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-# Partially adapted from flebel on GitHub at http://bit.ly/1ThAsJL.
-
 # Local Files
 from user_blacklist import user_blacklist
 from word_blacklist import word_blacklist
 
 # Libraries
+import sys
 import os
 import tweepy
 import json
@@ -34,6 +30,17 @@ last_id_file = os.path.join(bot_path, 'last_id')
 ''' helper fns'''
 
 
+def dev_environ():
+    ''' Boolean function that returns true if the dev flag is
+        set on the command line and false otherwise.
+    '''
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '--dev':
+            return True
+
+    return False
+
+
 def load_oauth_keys(dev):
     if dev:
         with open('settings.json', 'r') as f:
@@ -50,25 +57,13 @@ def load_oauth_keys(dev):
     return True
 
 
-def prod_oauth():
+def twitter_oauth(dev):
+    ''' Handles Twitter OAuth and returns a Tweepy API object.
+    '''
+    load_oauth_keys(dev)
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
     return tweepy.API(auth)
-
-
-def remove_quoted_text_old(twext):
-    result = ""
-    in_quotes = False
-    for c in twext:
-        if c is '"':
-            in_quotes = not in_quotes
-            continue
-        if not in_quotes:
-            result = result + c
-    # Quotations were mismatched! Return original string.
-    if in_quotes is True:
-        return twext
-    return result
 
 
 def remove_quoted_text(twext):
@@ -139,3 +134,9 @@ def retweet(cleaned_tweets):
     else:
         print('Nothing to retweet!')
     return retweets
+
+
+def print_tweet_info(tweet):
+    ''' Prints some basic info about the given tweet.
+    '''
+    print('(%s) %s: %s\n' % (tweet.created_at, tweet.author.screen_name, tweet.text))
