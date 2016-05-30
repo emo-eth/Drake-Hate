@@ -18,10 +18,6 @@ CONSUMER_SECRET = ''
 ACCESS_KEY = ''
 ACCESS_SECRET = ''
 
-auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
-api = tweepy.API(auth)
-
 # Store the ID of the last tweet we retweeted in a file
 # so we don't retweet things twice!
 bot_path = os.path.dirname(os.path.abspath(__file__))
@@ -37,8 +33,18 @@ def dev_environ():
     if len(sys.argv) > 1:
         if sys.argv[1] == '--dev':
             return True
-
     return False
+
+
+def remove_quoted_text(twext):
+    # alternate way of doing it?
+    pieces = twext.split('"')
+    # slice and skip by two
+    cut_out_quotes = pieces[::2]
+    temp = ''
+    for piece in cut_out_quotes:
+        temp += piece
+    return temp
 
 
 def load_oauth_keys(dev):
@@ -66,17 +72,6 @@ def twitter_oauth(dev):
     return tweepy.API(auth)
 
 
-def remove_quoted_text(twext):
-    # alternate way of doing it?
-    pieces = twext.split('"')
-    # slice and skip by two
-    cut_out_quotes = pieces[::2]
-    temp = ''
-    for piece in cut_out_quotes:
-        temp += piece
-    return temp
-
-
 def load_savepoint():
     savepoint = ''
     try:
@@ -101,8 +96,7 @@ def parse_savepoint_from_tweets(pre_clean_tweets):
         last_id = ''
     return last_id
 
-
-def twitter_search(savepoint):
+def twitter_search(api, savepoint):
     results = tweepy.Cursor(api.search, q='Drake', since_id=savepoint,
                             lang='en').items(TWITTER_SEARCH_LIMIT)
     tweets = []
@@ -120,7 +114,7 @@ def clean_search_results(tweets):
     return tweets
 
 
-def retweet(cleaned_tweets):
+def retweet(api, cleaned_tweets):
     retweets = 0
     for tweet in cleaned_tweets:
         twext = remove_quoted_text(tweet.text)
