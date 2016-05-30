@@ -2,7 +2,7 @@ import unittest
 import DrakeBot as bot
 
 
-class QuotedTextTest(unittest.TestCase):
+class BotTests(unittest.TestCase):
 
     def test_no_quotes(self):
         str_1 = 'i hate drake'
