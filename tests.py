@@ -1,9 +1,5 @@
 import unittest
-
-# Local files
 import DrakeBot as bot
-from utils import dev_environ
-
 
 
 class QuotedTextTest(unittest.TestCase):
@@ -59,11 +55,3 @@ class QuotedTextTest(unittest.TestCase):
         # this isn't necessarily true but in practice it
         # almost certainly will be
         assert len(cleaned) < len(tweets) and len(cleaned) != 0
-
-    def test_retweet(self):
-        '''Tests that retweets doesn't fail'''
-        api = bot.twitter_oauth()
-        tweets = bot.twitter_search(api, None)
-        tweets = bot.clean_search_results(tweets)
-        retweets = bot.retweet(api, tweets)
-        assert retweets

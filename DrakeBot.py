@@ -31,7 +31,7 @@ ACCESS_SECRET = ''
 API = None
 
 dev = dev_environ()
-gapi = gspread_oauth(True)
+gapi = gspread_oauth(dev)
 
 wks = gapi.open_by_key(SPREADSHEET_KEY).sheet1
 NUM_TWEETS_LOGGED = len(wks.get_all_values())
@@ -126,7 +126,6 @@ def retweet(api, cleaned_tweets):
                 api.retweet(tweet.id)
                 num_retweets += 1
                 print('Retweeting "%s"...' % twext)
-
         # Testing/ debug stuff
         if dev:
             print_tweet_info(tweet)
