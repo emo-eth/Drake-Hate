@@ -9,7 +9,7 @@ NUM_ROWS_TO_ADD = 1000
 MAX_NUM_TWEETS = 5000
 
 
-def get_gspread_credentials(dev):
+def get_gspread_credentials():
     ''' Returns a Google Spreadsheets credentials object.
     '''
     try:
@@ -34,10 +34,10 @@ def get_gspread_credentials(dev):
     return credentials
 
 
-def gspread_oauth(dev):
+def gspread_oauth():
     ''' Returns a Gspread Client instance.
     '''
-    credentials = get_gspread_credentials(dev)
+    credentials = get_gspread_credentials()
     return gspread.authorize(credentials)
 
 

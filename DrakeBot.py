@@ -31,7 +31,7 @@ ACCESS_SECRET = ''
 API = None
 
 dev = dev_environ()
-gapi = gspread_oauth(dev)
+gapi = gspread_oauth()
 
 wks = gapi.open_by_key(SPREADSHEET_KEY).sheet1
 NUM_TWEETS_LOGGED = len(wks.get_all_values())
@@ -181,9 +181,9 @@ last_id_file = os.path.join(bot_path, 'last_id')
 
 
 if __name__ == "__main__":
-    dev = True
-    load_oauth_keys(dev)
-    API = twitter_oauth(dev)
+    dev = dev_environ()
+    load_oauth_keys()
+    API = twitter_oauth()
     savepoint = load_savepoint()
     tweets = twitter_search(savepoint)
     savepoint = parse_savepoint_from_tweets(tweets)
