@@ -7,23 +7,9 @@ import sys
 import os
 import tweepy
 import json
+from gspread_utils import *
 
-''' local vars '''
-
-OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
-
-TWITTER_SEARCH_LIMIT = 350
-CONSUMER_KEY = ''
-CONSUMER_SECRET = ''
-ACCESS_KEY = ''
-ACCESS_SECRET = ''
-
-# Store the ID of the last tweet we retweeted in a file
-# so we don't retweet things twice!
-bot_path = os.path.dirname(os.path.abspath(__file__))
-last_id_file = os.path.join(bot_path, 'last_id')
-
-''' helper fns'''
+'''Global vars'''
 
 
 def dev_environ():
@@ -34,6 +20,26 @@ def dev_environ():
         if sys.argv[1] == '--dev':
             return True
     return False
+
+OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
+
+TWITTER_SEARCH_LIMIT = 350
+CONSUMER_KEY = ''
+CONSUMER_SECRET = ''
+ACCESS_KEY = ''
+ACCESS_SECRET = ''
+API = None
+
+dev = dev_environ()
+gapi = gspread_oauth(True)
+
+wks = gapi.open_by_key(SPREADSHEET_KEY).sheet1
+NUM_TWEETS_LOGGED = len(wks.get_all_values())
+
+''' helper fns'''
+
+
+
 
 
 def remove_quoted_text(twext):
@@ -47,15 +53,19 @@ def remove_quoted_text(twext):
     return temp
 
 
-def load_oauth_keys(dev):
-    if dev:
+def load_oauth_keys():
+    global CONSUMER_KEY
+    global CONSUMER_SECRET
+    global ACCESS_KEY
+    global ACCESS_SECRET
+    try:
         with open('settings.json', 'r') as f:
             settings = json.load(f)
         CONSUMER_KEY = settings['CONSUMER_KEY']
         CONSUMER_SECRET = settings['CONSUMER_SECRET']
         ACCESS_KEY = settings['ACCESS_KEY']
         ACCESS_SECRET = settings['ACCESS_SECRET']
-    else:
+    except:
         CONSUMER_KEY = os.environ['CONSUMER_KEY']
         CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
         ACCESS_KEY = os.environ['ACCESS_KEY']
@@ -63,10 +73,10 @@ def load_oauth_keys(dev):
     return True
 
 
-def twitter_oauth(dev):
+def twitter_oauth():
     ''' Handles Twitter OAuth and returns a Tweepy API object.
     '''
-    load_oauth_keys(dev)
+    load_oauth_keys()
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
     return tweepy.API(auth)
@@ -93,11 +103,13 @@ def parse_savepoint_from_tweets(pre_clean_tweets):
     try:
         last_id = last_tweet.id
     except IndexError:
+        print('error')
         last_id = ''
     return last_id
 
+
 def twitter_search(api, savepoint):
-    results = tweepy.Cursor(api.search, q='Drake', since_id=savepoint,
+    results = tweepy.Cursor(api.search, q='Drake', savepoint=savepoint,
                             lang='en').items(TWITTER_SEARCH_LIMIT)
     tweets = []
     for tweet in results:
@@ -107,7 +119,7 @@ def twitter_search(api, savepoint):
 
 def clean_search_results(tweets):
     tweets = [tweet for tweet in tweets if not any(
-        word.lower() in word_blacklist for word in tweet.text.split())]
+        word.lower() in word_blackliest for word in tweet.text.split)]
     tweets = [tweet for tweet in tweets
               if tweet.author.screen_name not in user_blacklist]
     tweets.reverse()
@@ -115,22 +127,49 @@ def clean_search_results(tweets):
 
 
 def retweet(api, cleaned_tweets):
-    retweets = 0
+    global NUM_TWEETS_LOGGED
+    num_retweets = 0
     for tweet in cleaned_tweets:
+        if NUM_TWEETS_LOGGED < MAX_NUM_TWEETS:
+            NUM_TWEETS_LOGGED = add_to_spreadsheet(wks, NUM_TWEETS_LOGGED, tweet)
         twext = remove_quoted_text(tweet.text)
         for phrase in OBVIOUS_PHRASES:
             if phrase in twext.lower():
                 api.retweet(tweet.id)
-                retweets += 1
+                num_retweets += 1
                 print('Retweeting "%s"...' % twext)
-    if retweets > 0:
-        print('Retweeted %d haters' % retweets if retweets != 1 else 'Retweeted 1 hater')
+
+        # Testing/ debug stuff
+        if dev:
+            print_tweet_info(tweet)
+    if num_retweets > 0:
+        print('Retweeted %d haters' % num_retweets if num_retweets != 1 else 'Retweeted 1 hater')
     else:
         print('Nothing to retweet!')
-    return retweets
+        num_retweets = -1
+    return num_retweets
 
 
 def print_tweet_info(tweet):
     ''' Prints some basic info about the given tweet.
     '''
     print('(%s) %s: %s\n' % (tweet.created_at, tweet.author.screen_name, tweet.text))
+
+''' local vars '''
+
+# Store the ID of the last tweet we retweeted in a file
+# so we don't retweet th
+bot_path = os.path.dirname(os.path.abspath(__file__))
+last_id_file = os.path.join(bot_path, 'last_id')
+
+
+if __name__ == "__main__":
+    dev = True
+    load_oauth_keys(dev)
+    API = twitter_oauth(dev)
+    savepoint = load_savepoint()
+    tweets = twitter_search(savepoint)
+    savepoint = parse_savepoint_from_tweets(tweets)
+    tweets = clean_search_results(tweets)
+    retweet(tweets)
+    write_savepoint(savepoint)
