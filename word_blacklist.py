@@ -13,6 +13,12 @@ word_blacklist = [
   '#onrepeat',
   '#streaming',
 
-  # A lot of people tweet about Drake and Josh apparently
+  # Drake and Josh
   'bell',
-  'josh']
+  'josh',
+
+  # Nathan Drake
+  'nathan',
+
+  # Player named Drake on the White Sox
+  'sox']
