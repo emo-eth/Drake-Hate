@@ -4,8 +4,6 @@
 # Partially adapted from flebel on GitHub at http://bit.ly/1ThAsJL.
 
 # Local Files
-from user_blacklist import user_blacklist
-from word_blacklist import word_blacklist
 from utils import *
 from gspread_utils import *
 
@@ -42,12 +40,7 @@ try:
 except IndexError:  # No results found
     last_tweet_id = savepoint
 
-# Filter tweets using blacklists
-tweets = [tweet for tweet in tweets if not any(
-    word.lower() in word_blacklist for word in tweet.text.split())]
-tweets = [tweet for tweet in tweets
-          if tweet.author.screen_name not in user_blacklist]
-tweets.reverse()
+tweets = clean_search_results(tweets)
 
 retweets = 0
 

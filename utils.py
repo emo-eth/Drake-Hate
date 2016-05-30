@@ -2,6 +2,10 @@
 # temporarily living here until we set up a main method in the 
 # bot.py file.
 
+# Local files
+from user_blacklist import user_blacklist
+from word_blacklist import word_blacklist
+
 # Libraries
 import json
 import sys
@@ -17,6 +21,7 @@ def dev_environ():
             return True
 
     return False
+
 
 def twitter_oauth(dev):
     ''' Handles Twitter OAuth and returns a Tweepy API object.
@@ -40,6 +45,7 @@ def twitter_oauth(dev):
     auth.set_access_token(access_key, access_secret)
     return tweepy.API(auth)
 
+
 def remove_quoted_text(twext):
     ''' Removes all words within double quotes from the given string.
     '''
@@ -57,6 +63,37 @@ def remove_quoted_text(twext):
         return twext
     
     return result
+
+
+def contains_word_in_blacklist(tweet):
+    words = [word.lower() for word in tweet.text.split()]
+    return not set(words).isdisjoint(word_blacklist)
+
+
+def contains_drake(tweet):
+    words = [word.lower() for word in tweet.text.split()]
+    return 'drake' in words
+
+
+def blacklisted_author(tweet):
+    return tweet.author.screen_name in user_blacklist
+
+
+def clean_search_results(tweets):
+    clean_tweets = []
+    for tweet in tweets:
+        if contains_word_in_blacklist(tweet):
+            continue
+        elif blacklisted_author(tweet):
+            continue
+        elif not contains_drake:
+            continue
+        else:
+            clean_tweets.append(tweet)
+    
+    clean_tweets.reverse()
+    return clean_tweets
+
 
 def print_tweet_info(tweet):
     ''' Prints some basic info about the given tweet.
