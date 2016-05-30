@@ -39,9 +39,6 @@ NUM_TWEETS_LOGGED = len(wks.get_all_values())
 ''' helper fns'''
 
 
-
-
-
 def remove_quoted_text(twext):
     # alternate way of doing it?
     pieces = twext.split('"')
@@ -117,15 +114,6 @@ def twitter_search(api, savepoint):
     return tweets
 
 
-def clean_search_results(tweets):
-    tweets = [tweet for tweet in tweets if not any(
-        word.lower() in word_blackliest for word in tweet.text.split)]
-    tweets = [tweet for tweet in tweets
-              if tweet.author.screen_name not in user_blacklist]
-    tweets.reverse()
-    return tweets
-
-
 def retweet(api, cleaned_tweets):
     global NUM_TWEETS_LOGGED
     num_retweets = 0
@@ -154,6 +142,36 @@ def print_tweet_info(tweet):
     ''' Prints some basic info about the given tweet.
     '''
     print('(%s) %s: %s\n' % (tweet.created_at, tweet.author.screen_name, tweet.text))
+
+
+def contains_word_in_blacklist(tweet):
+    words = [word.lower() for word in tweet.text.split()]
+    return not set(words).isdisjoint(word_blacklist)
+
+
+def contains_drake(tweet):
+    words = [word.lower() for word in tweet.text.split()]
+    return 'drake' in words
+
+
+def blacklisted_author(tweet):
+    return tweet.author.screen_name in user_blacklist
+
+
+def clean_search_results(tweets):
+    clean_tweets = []
+    for tweet in tweets:
+        if contains_word_in_blacklist(tweet):
+            continue
+        elif blacklisted_author(tweet):
+            continue
+        elif not contains_drake:
+            continue
+        else:
+            clean_tweets.append(tweet)
+
+    clean_tweets.reverse()
+    return clean_tweets
 
 ''' local vars '''
 
