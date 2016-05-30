@@ -45,13 +45,14 @@ class QuotedTextTest(unittest.TestCase):
         assert len(tweets) != 0
 
     def test_parse_savepoint(self):
+        '''Test that a savepoint can be parsed from tweets'''
         api = bot.twitter_oauth()
         tweets = bot.twitter_search(api, None)
         savepoint = bot.parse_savepoint_from_tweets(tweets)
         assert savepoint  # is not an empty string
 
     def test_clean_search_results(self):
-        ''''''
+        '''Tests that cleaned results actually cleans some results'''
         api = bot.twitter_oauth()
         tweets = bot.twitter_search(api, None)
         cleaned = bot.clean_search_results(tweets)
@@ -60,6 +61,7 @@ class QuotedTextTest(unittest.TestCase):
         assert len(cleaned) < len(tweets) and len(cleaned) != 0
 
     def test_retweet(self):
+        '''Tests that retweets doesn't fail'''
         api = bot.twitter_oauth()
         tweets = bot.twitter_search(api, None)
         tweets = bot.clean_search_results(tweets)
