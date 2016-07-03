@@ -12,7 +12,10 @@ from gspread_utils import *
 # Globals
 
 OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
+DRAKE_NAMES = ['drake', '@drake', 'drizzy']
 TWITTER_SEARCH_LIMIT = 350
+
+num_tweets_logged = None
 
 # Helper functions
 
@@ -67,7 +70,9 @@ def print_tweet_info(tweet):
     print('(%s) %s: %s\n' % (tweet.created_at, tweet.author.screen_name, tweet.text))
 
 
-def retweet(dev, api, wks, num_tweets_logged, tweets):
+def retweet(dev, api, wks, tweets):
+    global num_tweets_logged
+
     num_retweets = 0
     for tweet in tweets:
         if num_tweets_logged < MAX_NUM_TWEETS:
@@ -86,12 +91,12 @@ def retweet(dev, api, wks, num_tweets_logged, tweets):
 
 def contains_word_in_blacklist(tweet):
     words = [word.lower() for word in tweet.text.split()]
-    return not set(words).isdisjoint(word_blacklist)
+    return any(word in words for word in word_blacklist)
 
 
 def contains_drake(tweet):
     words = [word.lower() for word in tweet.text.split()]
-    return 'drake' in words
+    return any(name in words for name in DRAKE_NAMES)
 
 
 def blacklisted_author(tweet):
@@ -103,12 +108,12 @@ def filter_tweets(tweets):
     for tweet in tweets:
         if contains_word_in_blacklist(tweet):
             continue
-        elif blacklisted_author(tweet):
+        if blacklisted_author(tweet):
             continue
-        elif not contains_drake:
+        if not contains_drake(tweet):
             continue
-        else:
-            tweet.text = remove_quoted_text(tweet.text)
+        tweet.text = remove_quoted_text(tweet.text)
+        if tweet.text.strip():
             clean_tweets.append(tweet)
 
     clean_tweets.reverse()
@@ -142,13 +147,16 @@ def dev_environ(argv):
 
 
 def main(argv=sys.argv):
+    global num_tweets_logged
+
     dev = dev_environ(argv)
     api = twitter_oauth()
 
     wks = open_spreadsheet()
     num_tweets_logged = len(wks.get_all_values())
+
     tweets = get_tweets(api)
-    num_retweets = retweet(dev, api, wks, num_tweets_logged, tweets)
+    num_retweets = retweet(dev, api, wks, tweets)
 
     if num_retweets > 0:
         print('Retweeted %d haters' % num_retweets if num_retweets != 1 else 'Retweeted 1 hater')

@@ -56,8 +56,7 @@ def add_to_spreadsheet(wks, num_tweets, tweet):
     '''
     text = tweet.text
 
-    if _duplicate_tweet(wks, text): return
-
+    if _duplicate_tweet(wks, text): return num_tweets
     if num_tweets + 1 > wks.row_count:
         wks.add_rows(NUM_ROWS_TO_ADD)
 
