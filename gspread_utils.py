@@ -28,7 +28,8 @@ def get_gspread_credentials():
 
     signer = crypt.Signer.from_string(private_key_pkcs8_pem)
     credentials = ServiceAccountCredentials(service_account_email, signer,
-                                            scopes='https://spreadsheets.google.com/feeds', private_key_id=private_key_id, client_id=client_id)
+                                            scopes='https://spreadsheets.google.com/feeds', 
+                                            private_key_id=private_key_id, client_id=client_id)
     credentials._private_key_pkcs8_pem = private_key_pkcs8_pem
 
     return credentials
@@ -41,7 +42,7 @@ def gspread_oauth():
     return gspread.authorize(credentials)
 
 
-def is_duplicate(wks, text):
+def _duplicate_tweet(wks, text):
     try:
         wks.find(text)
     except gspread.CellNotFound:
@@ -55,7 +56,7 @@ def add_to_spreadsheet(wks, num_tweets, tweet):
     '''
     text = tweet.text
 
-    if is_duplicate(wks, text): return
+    if _duplicate_tweet(wks, text): return
 
     if num_tweets + 1 > wks.row_count:
         wks.add_rows(NUM_ROWS_TO_ADD)
