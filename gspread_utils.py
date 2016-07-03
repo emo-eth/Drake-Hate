@@ -6,7 +6,7 @@ from oauth2client import crypt
 
 SPREADSHEET_KEY = '1hUA03o4uOQvcywtIzlfUsP_DbDzwdShNlpsGecWSOME'
 NUM_ROWS_TO_ADD = 1000
-MAX_NUM_TWEETS = 5000
+MAX_NUM_TWEETS = 10000
 
 
 def get_gspread_credentials():
@@ -41,13 +41,25 @@ def gspread_oauth():
     return gspread.authorize(credentials)
 
 
+def is_duplicate(wks, text):
+    try:
+        wks.find(text)
+    except gspread.CellNotFound:
+        return False
+    return True
+
+
 def add_to_spreadsheet(wks, num_tweets, tweet):
     ''' Adds the text from the Tweet object to the Google Sheet.
         Returns the total number of tweets now logged on the spreadsheet.
     '''
+    text = tweet.text
+
+    if is_duplicate(wks, text): return
+
     if num_tweets + 1 > wks.row_count:
         wks.add_rows(NUM_ROWS_TO_ADD)
 
     # WATCH OUT: ROWS AND COLUMNS ARE NOT ZERO INDEXED!
-    wks.update_cell(num_tweets + 1, 1, tweet.text)
+    wks.update_cell(num_tweets + 1, 1, text)
     return num_tweets + 1
