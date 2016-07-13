@@ -12,6 +12,10 @@ from gspread_utils import *
 # Globals
 
 OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
+RETWEET_KEYWORDS = ['overrated', 'poor drake', 'trash', 'garbage', 'unpopular opinion'
+                    'hate drake', 'fuck drake', 'murdered drake', "don't @ me", 'dont @ me',
+                    "don't mention me", 'dont mention me', 'irrelevant', 'annoy', 'fraud',
+                    'ghost', 'sucked', 'wheelchair']
 DRAKE_NAMES = ['drake', '@drake', 'drizzy']
 TWITTER_SEARCH_LIMIT = 350
 
@@ -75,14 +79,15 @@ def retweet(dev, api, wks, tweets):
 
     num_retweets = 0
     for tweet in tweets:
-        if num_tweets_logged < MAX_NUM_TWEETS:
+        if any(keyword in tweet.text.lower() for keyword in RETWEET_KEYWORDS) and num_tweets_logged < MAX_NUM_TWEETS:
+            print('Adding "{0}" to spreadsheet...\n'.format(tweet.text))
             num_tweets_logged = add_to_spreadsheet(wks, num_tweets_logged, tweet)
 
         for phrase in OBVIOUS_PHRASES:
             if phrase in tweet.text.lower():
                 api.retweet(tweet.id)
                 num_retweets += 1
-                print('Retweeting "%s"...' % tweet.text)
+                print('Retweeting {0}...\n'.format(tweet.text))
 
         # Testing/ debug stuff
         if dev: print_tweet_info(tweet)
