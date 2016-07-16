@@ -15,7 +15,8 @@ OBVIOUS_PHRASES = ['drake is trash', 'i hate drake']
 RETWEET_KEYWORDS = ['overrated', 'poor drake', 'trash', 'garbage', 'unpopular opinion'
                     'hate drake', 'fuck drake', 'murdered drake', "don't @ me", 'dont @ me',
                     "don't mention me", 'dont mention me', 'irrelevant', 'annoy', 'fraud',
-                    'ghost', 'sucked', 'wheelchair']
+                    'ghost', 'sucked', 'wheelchair', 'no offense', ' fat ', 'ugly',
+                    'drake sucks', 'stfu drake']
 DRAKE_NAMES = ['drake', '@drake', 'drizzy']
 TWITTER_SEARCH_LIMIT = 350
 
