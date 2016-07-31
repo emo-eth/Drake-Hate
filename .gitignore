@@ -68,3 +68,5 @@ gspread_settings.json
 
 # Local last id file
 last_id
+
+.DS_Store
