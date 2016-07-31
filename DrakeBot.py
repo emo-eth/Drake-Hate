@@ -74,9 +74,8 @@ def twitter_oauth():
 def print_tweet_info(classifier, tweet):
     '''Prints some basic info about the given tweet to stdout.'''
     category = classifier.classify_eighty_percent(tweet.text).upper()
-    if category == 'NEGATIVE':
-        print('%s - (%s) %s: %s\n' % (
-            category, tweet.created_at, tweet.author.screen_name, tweet.text))
+    print('%s - (%s) %s: %s\n' % (
+        category, tweet.created_at, tweet.author.screen_name, tweet.text))
 
 
 def retweet(dev, api, wks, tweets):
