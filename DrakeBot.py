@@ -1,5 +1,6 @@
 # Local Files
 from blacklists import user_blacklist, word_blacklist
+from classifier import Classifier
 
 # Libraries
 import sys
@@ -69,15 +70,19 @@ def twitter_oauth():
     return tweepy.API(auth)
 
 
-def print_tweet_info(tweet):
+def print_tweet_info(classifier, tweet):
     '''Prints some basic info about the given tweet to stdout.'''
-    print('(%s) %s: %s\n' % (tweet.created_at, tweet.author.screen_name, tweet.text))
+    category = classifier.classify(tweet.text).upper()
+    print('%s - (%s) %s: %s\n' % (
+        category, tweet.created_at, tweet.author.screen_name, tweet.text))
 
 
 def retweet(dev, api, wks, tweets):
     global num_tweets_logged
 
     num_retweets = 0
+
+    classifier = Classifier()
     for tweet in tweets:
         if any(keyword in tweet.text.lower() for keyword in RETWEET_KEYWORDS) and num_tweets_logged < MAX_NUM_TWEETS:
             print('Adding "{0}" to spreadsheet...\n'.format(tweet.text))
@@ -90,7 +95,8 @@ def retweet(dev, api, wks, tweets):
                 print('Retweeting {0}...\n'.format(tweet.text))
 
         # Testing/ debug stuff
-        if dev: print_tweet_info(tweet)
+        if dev: 
+            print_tweet_info(classifier, tweet)
     return num_retweets
 
 
