@@ -1,6 +1,5 @@
 # Local Files
-from user_blacklist import user_blacklist
-from word_blacklist import word_blacklist
+from blacklists import user_blacklist, word_blacklist
 
 # Libraries
 import sys

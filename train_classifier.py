@@ -1,3 +1,4 @@
+"""Scripts used to train the Naive Bayes and Maximum Entropy Classifiers."""
 import csv
 from nltk.classify import NaiveBayesClassifier
 from nltk.classify import MaxentClassifier
