@@ -6,8 +6,9 @@ import csv
 from nltk.classify import NaiveBayesClassifier
 from nltk.classify import MaxentClassifier
 from nltk.sentiment import SentimentAnalyzer
-from nltk.sentiment.util import *
 from nltk.tokenize import word_tokenize
+from nltk.util import ngrams
+from nltk.sentiment.util import *
 import pickle
 
 # Index of columns in our CSV file.

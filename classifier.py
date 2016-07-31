@@ -23,3 +23,19 @@ class Classifier:
         tokens = word_tokenize(tweet)
         features = self.analyzer.apply_features(tokens)
         return self.classifier.classify(features[0])
+
+    def prob_classify(self, tweet):
+        tokens = word_tokenize(tweet)
+        features = self.analyzer.apply_features(tokens)
+        classified = self.classifier.prob_classify(features[0])
+        probabilities = {}
+        for outcome in ['positive', 'negative']:
+            probabilities[outcome] = classified.prob(outcome)
+        return probabilities
+
+    def classify_eighty_percent(self, tweet):
+        probability = self.prob_classify(tweet)
+        if probability['negative'] >= 0.8:
+            return 'negative'
+        else:
+            return 'positive'
