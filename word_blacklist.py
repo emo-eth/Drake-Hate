@@ -13,12 +13,11 @@ word_blacklist = [
   '#onrepeat',
   '#streaming',
 
-  # Drake and Josh
-  'bell',
+  'drake bell',
   'josh',
 
-  # Nathan Drake
-  'nathan',
-
-  # Player named Drake on the White Sox
-  'sox']
+  'mary drake',
+  'jessica drake',
+  'nathan drake',
+  'drake laroche'
+]
